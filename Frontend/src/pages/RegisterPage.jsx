@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const [roomsAvailable, setRoomsAvailable] = useState(null);
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -14,6 +15,13 @@ export function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    fetch('/api/rooms/availability')
+      .then((res) => res.json())
+      .then((data) => setRoomsAvailable(data.available === true))
+      .catch(() => setRoomsAvailable(false));
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -40,9 +48,21 @@ export function RegisterPage() {
       setSuccess('Registration successful. You can now log in.');
       setTimeout(() => navigate('/login'), 1200);
     } catch (err) {
-      setError(err.message || 'Registration failed. Only Super Admin can create accounts.');
+      setError(err.message || 'Registration failed.');
     }
   };
+
+  if (roomsAvailable === false) {
+    return (
+      <div className="max-w-lg mx-auto bg-amber-50 border border-amber-200 rounded-lg p-6">
+        <h1 className="text-xl font-bold mb-2 text-amber-900">Registration unavailable</h1>
+        <p className="text-amber-800 text-sm mb-4">
+          No rooms are currently available. Registration and login are temporarily disabled. Please check back later.
+        </p>
+        <Link to="/" className="text-sky-700 underline text-sm">Return to Home</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg mx-auto">

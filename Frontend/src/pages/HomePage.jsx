@@ -65,6 +65,9 @@ export function HomePage() {
       </div>
       <section>
         <h2 className="text-xl font-semibold mb-3">Available Rooms</h2>
+        <p className="text-sm text-slate-600 mb-4">
+          Check room availability below. Only when rooms are available can you register and log in to make a reservation.
+        </p>
         <div className="grid gap-4 md:grid-cols-3">
           {rooms.map((room) => (
             <RoomCard key={room.id} room={room} />

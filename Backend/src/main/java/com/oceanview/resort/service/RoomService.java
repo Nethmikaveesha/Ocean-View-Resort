@@ -19,6 +19,10 @@ public class RoomService {
         return roomRepository.findAll();
     }
 
+    public boolean hasAvailableRooms() {
+        return roomRepository.countByStatus(Room.Status.AVAILABLE) > 0;
+    }
+
     public Room createRoom(Room room) {
         roomRepository.findByRoomNumber(room.getRoomNumber())
                 .ifPresent(r -> {

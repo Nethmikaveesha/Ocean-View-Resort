@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, Outlet } from 'react-router-dom';
 
 export function Layout() {
   const navigate = useNavigate();
   const stored = typeof window !== 'undefined' ? window.localStorage.getItem('ovr_user') : null;
   const currentUser = stored ? JSON.parse(stored) : null;
+  const [roomsAvailable, setRoomsAvailable] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/rooms/availability')
+      .then((res) => res.json())
+      .then((data) => setRoomsAvailable(data.available === true))
+      .catch(() => setRoomsAvailable(false));
+  }, []);
 
   const handleLogout = () => {
     window.localStorage.removeItem('ovr_user');
     navigate('/login');
   };
+
+  const showRegisterLogin = currentUser || roomsAvailable === true;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -37,7 +47,7 @@ export function Layout() {
                 Logout
               </button>
             )}
-            {!currentUser && (
+            {!currentUser && showRegisterLogin && (
               <>
                 <Link to="/login" className="hover:text-sky-200">
                   Login
@@ -56,6 +66,12 @@ export function Layout() {
           </nav>
         </div>
       </header>
+
+      {!currentUser && roomsAvailable === false && (
+        <div className="bg-amber-100 border-b border-amber-400 text-amber-900 px-4 py-2 text-center text-sm font-medium" role="alert">
+          No rooms are currently available. Registration and login are temporarily unavailable. Please check back later.
+        </div>
+      )}
 
       <main className="flex-1">
         <div className="max-w-6xl mx-auto px-4 py-8">

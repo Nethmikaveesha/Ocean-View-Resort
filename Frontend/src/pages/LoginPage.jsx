@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
+  const [roomsAvailable, setRoomsAvailable] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/rooms/availability')
+      .then((res) => res.json())
+      .then((data) => setRoomsAvailable(data.available === true))
+      .catch(() => setRoomsAvailable(false));
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,6 +50,18 @@ export function LoginPage() {
     localStorage.removeItem('ovr_user');
     navigate('/');
   };
+
+  if (roomsAvailable === false) {
+    return (
+      <div className="max-w-md mx-auto bg-amber-50 border border-amber-200 rounded-lg p-6">
+        <h1 className="text-xl font-bold mb-2 text-amber-900">Login unavailable</h1>
+        <p className="text-amber-800 text-sm mb-4">
+          No rooms are currently available. Registration and login are temporarily disabled. Please check back later.
+        </p>
+        <Link to="/" className="text-sky-700 underline text-sm">Return to Home</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto">

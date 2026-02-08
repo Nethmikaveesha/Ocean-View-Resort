@@ -39,6 +39,11 @@ public class RoomController {
         return roomService.getAllRooms();
     }
 
+    @GetMapping("/availability")
+    public java.util.Map<String, Boolean> getAvailability() {
+        return java.util.Map.of("available", roomService.hasAvailableRooms());
+    }
+
     @PostMapping
     public ResponseEntity<?> createRoom(
             @RequestHeader(value = "X-User-Id", required = false) String userId,

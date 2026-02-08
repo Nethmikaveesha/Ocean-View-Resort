@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface RoomRepository extends MongoRepository<Room, String> {
 
     Optional<Room> findByRoomNumber(String roomNumber);
+
+    long countByStatus(Room.Status status);
 }
 
