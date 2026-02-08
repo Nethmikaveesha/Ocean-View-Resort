@@ -86,7 +86,7 @@ public class RoomController {
             Path target = dir.resolve(filename);
             file.transferTo(target.toFile());
             String imageUrl = "/uploads/" + filename;
-            return ResponseEntity.ok(new java.util.Map.of("imageUrl", imageUrl));
+            return ResponseEntity.ok(java.util.Map.of("imageUrl", imageUrl));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to save image: " + e.getMessage());
