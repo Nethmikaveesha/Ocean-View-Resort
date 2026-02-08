@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
 
-export function Layout({ children }) {
+export function Layout() {
   const navigate = useNavigate();
   const stored = typeof window !== 'undefined' ? window.localStorage.getItem('ovr_user') : null;
   const currentUser = stored ? JSON.parse(stored) : null;
@@ -29,30 +29,30 @@ export function Layout({ children }) {
               Help
             </Link>
             {currentUser && (
-              <>
-                <Link to="/dashboard" className="hover:text-sky-200">
-                  Dashboard
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="text-xs md:text-sm underline underline-offset-4 hover:text-sky-200"
-                >
-                  Logout
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="text-xs md:text-sm underline underline-offset-4 hover:text-sky-200"
+              >
+                Logout
+              </button>
             )}
             {!currentUser && (
               <Link to="/login" className="hover:text-sky-200">
                 Login
               </Link>
             )}
+            <Link to="/admin" className="text-sky-300 hover:text-sky-200 text-xs">
+              Staff: Admin
+            </Link>
           </nav>
         </div>
       </header>
 
       <main className="flex-1">
-        <div className="max-w-6xl mx-auto px-4 py-8">{children}</div>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <Outlet />
+        </div>
       </main>
 
       <footer className="bg-slate-900 text-slate-300 text-sm">

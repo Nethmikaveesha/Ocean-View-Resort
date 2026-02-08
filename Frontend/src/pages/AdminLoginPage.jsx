@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export function LoginPage() {
+export function AdminLoginPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
@@ -23,29 +23,23 @@ export function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
-      if (!res.ok) {
-        throw new Error('Invalid credentials');
-      }
+      if (!res.ok) throw new Error('Invalid credentials');
       const data = await res.json();
-      localStorage.setItem('ovr_user', JSON.stringify(data));
-      if (data.role === 'SUPER_ADMIN') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/');
+      if (data.role !== 'SUPER_ADMIN') {
+        setError('Access denied. Super Admin only.');
+        return;
       }
+      localStorage.setItem('ovr_user', JSON.stringify(data));
+      navigate('/admin/dashboard');
     } catch (err) {
       setError('Invalid username or password.');
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('ovr_user');
-    navigate('/');
-  };
-
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      <h1 className="text-2xl font-bold mb-4">Admin Login</h1>
+      <p className="text-slate-600 text-sm mb-4">Super Admin only. Use the customer site to log in as a customer.</p>
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
         {error && <div className="text-red-600 text-sm">{error}</div>}
         <div>
@@ -70,19 +64,11 @@ export function LoginPage() {
         </div>
         <button
           type="submit"
-          className="w-full bg-sky-700 text-white py-2 rounded-md text-sm font-semibold hover:bg-sky-800"
+          className="w-full bg-slate-800 text-white py-2 rounded-md text-sm font-semibold hover:bg-slate-700"
         >
           Login
         </button>
       </form>
-
-      <button
-        onClick={handleLogout}
-        className="mt-4 text-sm text-sky-700 underline hover:text-sky-900"
-      >
-        Logout / Exit System
-      </button>
     </div>
   );
 }
-
