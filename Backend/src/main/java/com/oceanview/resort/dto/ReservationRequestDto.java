@@ -1,6 +1,5 @@
 package com.oceanview.resort.dto;
 
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -27,11 +26,9 @@ public class ReservationRequestDto {
     private String roomType;
 
     @NotNull
-    @Future
     private LocalDateTime checkInDateTime;
 
     @NotNull
-    @Future
     private LocalDateTime checkOutDateTime;
 
     private String customerId;

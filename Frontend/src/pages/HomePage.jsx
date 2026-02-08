@@ -12,10 +12,20 @@ export function HomePage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Welcome to Ocean View Resort</h1>
-      <p className="mb-6 text-slate-700">
-        Browse our rooms and make your reservation online in just a few steps.
-      </p>
+      <div className="relative w-full rounded-xl overflow-hidden mb-8 shadow-lg">
+        <img
+          src="/resort-hero.png"
+          alt="Ocean View Resort at sunset — pool, palm trees and modern architecture"
+          className="w-full h-[280px] md:h-[360px] object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+          <h1 className="text-3xl md:text-4xl font-bold drop-shadow-lg">Welcome to Ocean View Resort</h1>
+          <p className="mt-2 text-white/95 text-lg drop-shadow">
+            Browse our rooms and make your reservation online in just a few steps.
+          </p>
+        </div>
+      </div>
       <section>
         <h2 className="text-xl font-semibold mb-3">Available Rooms</h2>
         <div className="grid gap-4 md:grid-cols-3">

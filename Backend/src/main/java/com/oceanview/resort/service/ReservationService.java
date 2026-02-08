@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +58,46 @@ public class ReservationService {
 
     public Optional<Reservation> getByReservationNumber(String reservationNumber) {
         return reservationRepository.findByReservationNumber(reservationNumber);
+    }
+
+    public List<Reservation> findAll() {
+        return reservationRepository.findAll();
+    }
+
+    public Optional<Reservation> findById(String id) {
+        return reservationRepository.findById(id);
+    }
+
+    public Reservation updateReservation(String id, ReservationRequestDto request) {
+        Reservation existing = reservationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+        validateDates(request.getCheckInDateTime(), request.getCheckOutDateTime());
+        Room room = roomRepository.findById(request.getRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+        int nights = calculateNights(request.getCheckInDateTime(), request.getCheckOutDateTime());
+        double ratePerNight = room.getRatePerNight();
+        double total = nights * ratePerNight;
+        existing.setGuestName(request.getGuestName());
+        existing.setAddress(request.getAddress());
+        existing.setNicNumber(request.getNicNumber());
+        existing.setContactNumber(request.getContactNumber());
+        existing.setRoomId(room.getId());
+        existing.setRoomType(room.getRoomType());
+        existing.setCheckInDateTime(request.getCheckInDateTime());
+        existing.setCheckOutDateTime(request.getCheckOutDateTime());
+        existing.setNights(nights);
+        existing.setRatePerNight(ratePerNight);
+        existing.setTotalAmount(total);
+        if (request.getCustomerId() != null) existing.setCustomerId(request.getCustomerId());
+        if (request.getCreatedByStaffId() != null) existing.setCreatedByStaffId(request.getCreatedByStaffId());
+        return reservationRepository.save(existing);
+    }
+
+    public void deleteReservation(String id) {
+        if (!reservationRepository.existsById(id)) {
+            throw new IllegalArgumentException("Reservation not found");
+        }
+        reservationRepository.deleteById(id);
     }
 
     private void validateDates(LocalDateTime checkIn, LocalDateTime checkOut) {

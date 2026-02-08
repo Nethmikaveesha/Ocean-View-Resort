@@ -43,17 +43,9 @@ export function Layout({ children }) {
               </>
             )}
             {!currentUser && (
-              <>
-                <Link to="/login" className="hover:text-sky-200">
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="inline-block bg-white text-sky-700 px-3 py-1 rounded-md text-sm font-medium hover:bg-sky-100"
-                >
-                  Register
-                </Link>
-              </>
+              <Link to="/login" className="hover:text-sky-200">
+                Login
+              </Link>
             )}
           </nav>
         </div>

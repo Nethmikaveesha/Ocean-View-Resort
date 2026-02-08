@@ -40,7 +40,7 @@ export function RegisterPage() {
       setSuccess('Registration successful. You can now log in.');
       setTimeout(() => navigate('/login'), 1200);
     } catch (err) {
-      setError('Registration failed. Username may already exist.');
+      setError(err.message || 'Registration failed. Only Super Admin can create accounts.');
     }
   };
 

@@ -43,9 +43,18 @@ public class RoomController {
     public ResponseEntity<?> createRoom(
             @RequestHeader(value = "X-User-Id", required = false) String userId,
             @Valid @RequestBody Room room) {
-        authService.requireRole(userId, User.Role.SUPER_ADMIN, User.Role.ADMIN);
+        authService.requireRole(userId, User.Role.SUPER_ADMIN);
         Room created = roomService.createRoom(room);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRoom(
+            @RequestHeader(value = "X-User-Id", required = false) String userId,
+            @PathVariable String id) {
+        authService.requireRole(userId, User.Role.SUPER_ADMIN);
+        roomService.deleteRoom(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
@@ -53,7 +62,7 @@ public class RoomController {
             @RequestHeader(value = "X-User-Id", required = false) String userId,
             @PathVariable String id,
             @Valid @RequestBody Room room) {
-        authService.requireRole(userId, User.Role.SUPER_ADMIN, User.Role.ADMIN);
+        authService.requireRole(userId, User.Role.SUPER_ADMIN);
         Room updated = roomService.updateRoom(id, room);
         return ResponseEntity.ok(updated);
     }
@@ -62,7 +71,7 @@ public class RoomController {
     public ResponseEntity<?> uploadRoomImage(
             @RequestHeader(value = "X-User-Id", required = false) String userId,
             @RequestParam("file") MultipartFile file) {
-        authService.requireRole(userId, User.Role.SUPER_ADMIN, User.Role.ADMIN);
+        authService.requireRole(userId, User.Role.SUPER_ADMIN);
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("No file provided");
         }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { RoomManagement } from '../components/RoomManagement';
+import { CustomerManagement } from '../components/CustomerManagement';
+import { ReservationManagement } from '../components/ReservationManagement';
 
 export function SuperAdminDashboardPage({ user }) {
   const [summary, setSummary] = useState(null);
@@ -27,11 +29,12 @@ export function SuperAdminDashboardPage({ user }) {
           <DashboardCard label="Today's Departures" value={summary.todaysDepartures} />
         </div>
       )}
-      <p className="text-sm text-slate-700">
-        As Super Admin you can oversee all users and system statistics. (User management endpoints
-        can be added on top of this dashboard.)
+      <p className="text-sm text-slate-700 mb-4">
+        Full access: manage customers, rooms, and reservations below.
       </p>
+      <CustomerManagement user={user} />
       <RoomManagement user={user} />
+      <ReservationManagement user={user} />
     </div>
   );
 }

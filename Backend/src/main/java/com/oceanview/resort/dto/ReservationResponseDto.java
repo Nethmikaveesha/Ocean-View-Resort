@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class ReservationResponseDto {
 
+    private String id;
     private String reservationNumber;
     private String guestName;
     private String address;
@@ -22,6 +23,7 @@ public class ReservationResponseDto {
 
     public static ReservationResponseDto fromEntity(Reservation reservation) {
         ReservationResponseDto dto = new ReservationResponseDto();
+        dto.setId(reservation.getId());
         dto.setReservationNumber(reservation.getReservationNumber());
         dto.setGuestName(reservation.getGuestName());
         dto.setAddress(reservation.getAddress());
@@ -37,6 +39,9 @@ public class ReservationResponseDto {
         dto.setStatus(reservation.getStatus());
         return dto;
     }
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getReservationNumber() {
         return reservationNumber;

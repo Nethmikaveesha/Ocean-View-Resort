@@ -22,10 +22,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
-        User user = authService.registerCustomer(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("User registered with id: " + user.getId());
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Registration is disabled. Only Super Admin can create accounts.");
     }
 
     @PostMapping("/login")

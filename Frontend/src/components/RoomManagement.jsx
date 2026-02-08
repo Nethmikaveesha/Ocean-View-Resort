@@ -108,6 +108,23 @@ export function RoomManagement({ user }) {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this room?')) return;
+    setError('');
+    try {
+      const res = await fetch(`/api/rooms/${id}`, {
+        method: 'DELETE',
+        headers: headers()
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setSuccess('Room deleted.');
+      loadRooms();
+      if (editingId === id) resetForm();
+    } catch (err) {
+      setError(err.message || 'Delete failed');
+    }
+  };
+
   const startEdit = (room) => {
     setEditingId(room.id);
     setForm({
@@ -293,9 +310,16 @@ export function RoomManagement({ user }) {
                   <button
                     type="button"
                     onClick={() => startEdit(room)}
-                    className="text-sky-600 hover:underline text-xs"
+                    className="text-sky-600 hover:underline text-xs mr-2"
                   >
                     Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(room.id)}
+                    className="text-red-600 hover:underline text-xs"
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
