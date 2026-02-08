@@ -22,9 +22,20 @@ export function HomePage() {
           {rooms.map((room) => (
             <div
               key={room.id}
-              className="border rounded-lg p-4 shadow-sm bg-white flex flex-col justify-between"
+              className="border rounded-lg overflow-hidden shadow-sm bg-white flex flex-col justify-between"
             >
-              <div>
+              {room.imageUrl ? (
+                <img
+                  src={room.imageUrl}
+                  alt={`${room.roomType} ${room.roomNumber}`}
+                  className="w-full h-40 object-cover"
+                />
+              ) : (
+                <div className="w-full h-40 bg-slate-200 flex items-center justify-center text-slate-500 text-sm">
+                  No image
+                </div>
+              )}
+              <div className="p-4">
                 <h3 className="font-semibold text-lg mb-1">
                   {room.roomType} #{room.roomNumber}
                 </h3>
@@ -32,10 +43,10 @@ export function HomePage() {
                 <p className="text-sm text-slate-700">
                   Sleeps {room.capacity} guests • Rs. {room.ratePerNight.toFixed(2)} per night
                 </p>
+                <span className="mt-3 inline-block text-xs font-medium uppercase tracking-wide text-emerald-600">
+                  {room.status}
+                </span>
               </div>
-              <span className="mt-3 inline-block text-xs font-medium uppercase tracking-wide text-emerald-600">
-                {room.status}
-              </span>
             </div>
           ))}
           {rooms.length === 0 && (

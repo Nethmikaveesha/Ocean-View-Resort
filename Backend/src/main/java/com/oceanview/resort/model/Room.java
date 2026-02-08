@@ -15,6 +15,7 @@ public class Room {
     private int capacity;
     private double ratePerNight;
     private Status status = Status.AVAILABLE;
+    private String imageUrl;
 
     public enum Status {
         AVAILABLE,
@@ -76,6 +77,14 @@ public class Room {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
 

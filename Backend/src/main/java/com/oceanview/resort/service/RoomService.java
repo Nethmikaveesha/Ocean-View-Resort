@@ -37,6 +37,7 @@ public class RoomService {
         existing.setCapacity(updated.getCapacity());
         existing.setRatePerNight(updated.getRatePerNight());
         existing.setStatus(updated.getStatus());
+        existing.setImageUrl(updated.getImageUrl());
 
         return roomRepository.save(existing);
     }

@@ -11,8 +11,10 @@ export function RoomManagement({ user }) {
     description: '',
     capacity: 2,
     ratePerNight: '',
-    status: 'AVAILABLE'
+    status: 'AVAILABLE',
+    imageUrl: ''
   });
+  const [uploading, setUploading] = useState(false);
 
   const headers = () => ({
     'Content-Type': 'application/json',
@@ -45,11 +47,36 @@ export function RoomManagement({ user }) {
       description: '',
       capacity: 2,
       ratePerNight: '',
-      status: 'AVAILABLE'
+      status: 'AVAILABLE',
+      imageUrl: ''
     });
     setEditingId(null);
     setError('');
     setSuccess('');
+  };
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.userId) return;
+    setError('');
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/rooms/upload', {
+        method: 'POST',
+        headers: { 'X-User-Id': user.userId },
+        body: formData
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setForm((prev) => ({ ...prev, imageUrl: data.imageUrl || '' }));
+    } catch (err) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +85,8 @@ export function RoomManagement({ user }) {
     setSuccess('');
     const body = {
       ...form,
-      ratePerNight: parseFloat(form.ratePerNight) || 0
+      ratePerNight: parseFloat(form.ratePerNight) || 0,
+      imageUrl: form.imageUrl || null
     };
     const url = editingId ? `/api/rooms/${editingId}` : '/api/rooms';
     const method = editingId ? 'PUT' : 'POST';
@@ -88,9 +116,14 @@ export function RoomManagement({ user }) {
       description: room.description || '',
       capacity: room.capacity ?? 2,
       ratePerNight: String(room.ratePerNight ?? ''),
-      status: room.status || 'AVAILABLE'
+      status: room.status || 'AVAILABLE',
+      imageUrl: room.imageUrl || ''
     });
   };
+
+  const imagePreviewUrl = form.imageUrl
+    ? (form.imageUrl.startsWith('http') ? form.imageUrl : form.imageUrl)
+    : null;
 
   return (
     <section className="mt-8">
@@ -172,6 +205,39 @@ export function RoomManagement({ user }) {
             <option value="MAINTENANCE">MAINTENANCE</option>
           </select>
         </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-600 mb-1">Room image</label>
+          <div className="flex flex-wrap items-start gap-3">
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                disabled={uploading}
+                className="block w-full text-sm text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-sky-50 file:text-sky-700"
+              />
+              {uploading && <span className="text-xs text-slate-500">Uploading…</span>}
+            </div>
+            <span className="text-slate-500 text-xs">or paste URL:</span>
+            <input
+              type="url"
+              name="imageUrl"
+              value={form.imageUrl}
+              onChange={handleChange}
+              placeholder="https://… or /uploads/…"
+              className="flex-1 min-w-[200px] border rounded px-2 py-1.5 text-sm"
+            />
+          </div>
+          {imagePreviewUrl && (
+            <div className="mt-2">
+              <img
+                src={imagePreviewUrl}
+                alt="Room preview"
+                className="h-24 w-auto rounded border object-cover"
+              />
+            </div>
+          )}
+        </div>
         <div className="flex gap-2">
           <button
             type="submit"
@@ -195,6 +261,7 @@ export function RoomManagement({ user }) {
         <table className="w-full text-sm border rounded overflow-hidden">
           <thead className="bg-slate-100">
             <tr>
+              <th className="text-left p-2">Image</th>
               <th className="text-left p-2">#</th>
               <th className="text-left p-2">Type</th>
               <th className="text-left p-2">Capacity</th>
@@ -206,6 +273,17 @@ export function RoomManagement({ user }) {
           <tbody>
             {rooms.map((room) => (
               <tr key={room.id} className="border-t">
+                <td className="p-2">
+                  {room.imageUrl ? (
+                    <img
+                      src={room.imageUrl}
+                      alt=""
+                      className="h-10 w-14 rounded object-cover"
+                    />
+                  ) : (
+                    <span className="text-slate-400 text-xs">—</span>
+                  )}
+                </td>
                 <td className="p-2">{room.roomNumber}</td>
                 <td className="p-2">{room.roomType}</td>
                 <td className="p-2">{room.capacity}</td>
