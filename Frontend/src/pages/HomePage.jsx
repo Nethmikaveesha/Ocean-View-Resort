@@ -1,5 +1,42 @@
 import React, { useEffect, useState } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
+function RoomCard({ room }) {
+  const imageSrc = room.imageUrl ? (room.imageUrl.startsWith('http') ? room.imageUrl : API_BASE + room.imageUrl) : null;
+  const [imageError, setImageError] = useState(false);
+  const showImage = imageSrc && !imageError;
+
+  return (
+    <div className="border rounded-lg overflow-hidden shadow-sm bg-white flex flex-col justify-between">
+      {showImage ? (
+        <img
+          src={imageSrc}
+          alt={`${room.roomType} ${room.roomNumber}`}
+          className="w-full h-40 object-cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div className="w-full h-40 bg-slate-200 flex items-center justify-center text-slate-500 text-sm">
+          No image
+        </div>
+      )}
+      <div className="p-4">
+        <h3 className="font-semibold text-lg mb-1">
+          {room.roomType} #{room.roomNumber}
+        </h3>
+        <p className="text-sm text-slate-600 mb-2">{room.description}</p>
+        <p className="text-sm text-slate-700">
+          Sleeps {room.capacity} guests • Rs. {room.ratePerNight.toFixed(2)} per night
+        </p>
+        <span className="mt-3 inline-block text-xs font-medium uppercase tracking-wide text-emerald-600">
+          {room.status}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function HomePage() {
   const [rooms, setRooms] = useState([]);
 
@@ -30,34 +67,7 @@ export function HomePage() {
         <h2 className="text-xl font-semibold mb-3">Available Rooms</h2>
         <div className="grid gap-4 md:grid-cols-3">
           {rooms.map((room) => (
-            <div
-              key={room.id}
-              className="border rounded-lg overflow-hidden shadow-sm bg-white flex flex-col justify-between"
-            >
-              {room.imageUrl ? (
-                <img
-                  src={room.imageUrl}
-                  alt={`${room.roomType} ${room.roomNumber}`}
-                  className="w-full h-40 object-cover"
-                />
-              ) : (
-                <div className="w-full h-40 bg-slate-200 flex items-center justify-center text-slate-500 text-sm">
-                  No image
-                </div>
-              )}
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-1">
-                  {room.roomType} #{room.roomNumber}
-                </h3>
-                <p className="text-sm text-slate-600 mb-2">{room.description}</p>
-                <p className="text-sm text-slate-700">
-                  Sleeps {room.capacity} guests • Rs. {room.ratePerNight.toFixed(2)} per night
-                </p>
-                <span className="mt-3 inline-block text-xs font-medium uppercase tracking-wide text-emerald-600">
-                  {room.status}
-                </span>
-              </div>
-            </div>
+            <RoomCard key={room.id} room={room} />
           ))}
           {rooms.length === 0 && (
             <p className="text-sm text-slate-600">
